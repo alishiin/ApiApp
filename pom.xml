@@ -89,7 +89,7 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
+				<filtering>false</filtering> <!-- desactivamos el filtering -->
 			</resource>
 		</resources>
 
@@ -156,5 +156,6 @@
 			</plugin>
 		</plugins>
 	</build>
+
 
 </project>
