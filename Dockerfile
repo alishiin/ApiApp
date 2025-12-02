@@ -1,16 +1,23 @@
-# Imagen base con JDK 17
-FROM eclipse-temurin:17-jdk
+# Usamos imagen con Maven y JDK 17
+FROM maven:3.9.3-eclipse-temurin-17 AS build
 
-LABEL authors="stago"
-
-# Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiamos el JAR de la API
-COPY target/ApiApp-0.0.1-SNAPSHOT.jar app.jar
+# Copiamos los archivos de Maven
+COPY pom.xml .
+COPY src ./src
 
-# Exponemos el puerto donde corre la API
+# Construimos el JAR
+RUN mvn clean package -DskipTests
+
+# Segunda etapa: imagen más ligera para correr el JAR
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+
+# Copiamos el JAR generado desde la etapa build
+COPY --from=build /app/target/ApiApp-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
 
-# Comando para ejecutar la API
 ENTRYPOINT ["java", "-jar", "app.jar"]
